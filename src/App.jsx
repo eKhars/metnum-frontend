@@ -1,6 +1,7 @@
-import { useState } from "react";
-import Plot from "react-plotly.js";
-import axios from "axios";
+import React, { useState } from 'react';
+import Plot from 'react-plotly.js';
+import axios from 'axios';
+import { log } from 'mathjs';
 
 function App() {
   const [method, setMethod] = useState("");
@@ -10,6 +11,7 @@ function App() {
   const [iteracion, setIteracion] = useState("");
   const [errorMargin, setErrorMargin] = useState("");
   const [plotData, setPlotData] = useState(null);
+  const [tableData, setTableData] = useState(null); // Estado para almacenar los datos de la tabla
 
   const backend = "http://localhost:3000/solve";
 
@@ -45,6 +47,10 @@ function App() {
       try {
         const result = await axios.post(backend, data);
         console.log(result.data);
+
+        // Actualizar el estado con los datos de la tabla
+        setTableData(result.data.tabla);
+
       } catch (error) {
         console.log(error);
         return;
@@ -61,14 +67,17 @@ function App() {
       try {
         const result = await axios.post(backend, data);
         console.log(result.data);
+
+        // Actualizar el estado con los datos de la tabla
+        setTableData(result.data.tabla);
+
       } catch (error) {
         console.log(error.message);
         return;
       }
     }
 
-    // Aquí deberías procesar la función y generar los datos para la gráfica
-    // Por simplicidad, este ejemplo solo muestra una función lineal
+    // Generar datos para la gráfica
     const x = [];
     const y = [];
     for (
@@ -77,7 +86,6 @@ function App() {
       i += 0.1
     ) {
       x.push(i);
-      // Reemplaza "^" por "**"
       const parsedFunc = func.replace(/\^/g, "**");
       y.push(eval(parsedFunc.replace("x", `(${i})`)));
     }
@@ -220,6 +228,28 @@ function App() {
                 }}
               />
             </div>
+            {tableData && ( // Mostrar la tabla si hay datos disponibles
+              <div className="mt-8">
+                <table className="table-auto">
+                  <thead>
+                    <tr>
+                      {Object.keys(tableData[0]).map((key) => (
+                        <th key={key} className="px-4 py-2 bg-gray-800 text-white">{key}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableData.map((row, index) => (
+                      <tr key={index}>
+                        {Object.values(row).map((value, idx) => (
+                          <td key={idx} className="px-4 py-2 border">{value}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
       </div>
