@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Plot from 'react-plotly.js';
 import axios from 'axios';
-import { log } from 'mathjs';
+import { parse } from 'postcss';
 
 function App() {
   const [method, setMethod] = useState("");
@@ -59,10 +59,10 @@ function App() {
       const data = {
         metodo: method,
         funcion: `(x) => ${func}`,
-        xi: intervalStart,
-        xf: intervalEnd,
-        iteraciones: iteracion,
-        error_permisible: errorMargin,
+        xi: parseFloat(intervalStart),
+        xf: parseFloat(intervalEnd),
+        iteraciones: parseInt(iteracion),
+        error_permisible: parseFloat(errorMargin),
       };
       try {
         const result = await axios.post(backend, data);
