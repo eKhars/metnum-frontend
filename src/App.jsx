@@ -1,49 +1,54 @@
-import React, { useState } from 'react';
-import Plot from 'react-plotly.js';
-import axios from 'axios';
-import { log } from 'mathjs';
+import { useState } from "react";
+import Plot from "react-plotly.js";
+import axios from "axios";
 
 function App() {
-  const [method, setMethod] = useState('');
-  const [func, setFunc] = useState('');
-  const [intervalStart, setIntervalStart] = useState('');
-  const [intervalEnd, setIntervalEnd] = useState('');
-  const [iteracion, setIteracion] = useState('');
-  const [errorMargin, setErrorMargin] = useState('');
+  const [method, setMethod] = useState("");
+  const [func, setFunc] = useState("");
+  const [intervalStart, setIntervalStart] = useState("");
+  const [intervalEnd, setIntervalEnd] = useState("");
+  const [iteracion, setIteracion] = useState("");
+  const [errorMargin, setErrorMargin] = useState("");
   const [plotData, setPlotData] = useState(null);
 
-  const backend = "http://localhost:3000/solve"
+  const backend = "http://localhost:3000/solve";
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Aquí puedes realizar la lógica para manejar el envío del formulario
-    console.log('Método:', method);
-    console.log('Función:', func);
-    console.log('Intervalo de inicio:', intervalStart);
-    console.log('Intervalo de fin:', intervalEnd);
-    console.log('Iteracion:', iteracion);
-    console.log('Margen de error:', errorMargin);
+    console.log("Método:", method);
+    console.log("Función:", func);
+    console.log("Intervalo de inicio:", intervalStart);
+    console.log("Intervalo de fin:", intervalEnd);
+    console.log("Iteracion:", iteracion);
+    console.log("Margen de error:", errorMargin);
 
-    if (!method || !func || !intervalStart || !intervalEnd || !iteracion || !errorMargin) {
-      alert('Por favor, completa todos los campos');
+    if (
+      !method ||
+      !func ||
+      !intervalStart ||
+      !intervalEnd ||
+      !iteracion ||
+      !errorMargin
+    ) {
+      alert("Por favor, completa todos los campos");
       return;
-    } else if (method === 'newtonRaphson') {
+    } else if (method === "newtonRaphson") {
       const data = {
         metodo: method,
         funcion: func,
         xi: intervalStart,
         xf: intervalEnd,
         iteraciones: iteracion,
-        error_permisible: errorMargin
-      }
+        error_permisible: errorMargin,
+      };
       try {
-        const result = await axios.post(backend, data)
-        console.log(result.data)
+        const result = await axios.post(backend, data);
+        console.log(result.data);
       } catch (error) {
-        console.log(error)
-        return
+        console.log(error);
+        return;
       }
-
     } else {
       const data = {
         metodo: method,
@@ -51,14 +56,14 @@ function App() {
         xi: intervalStart,
         xf: intervalEnd,
         iteraciones: iteracion,
-        error_permisible: errorMargin
-      }
+        error_permisible: errorMargin,
+      };
       try {
-        const result = await axios.post(backend, data)
-        console.log(result.data)
+        const result = await axios.post(backend, data);
+        console.log(result.data);
       } catch (error) {
-        console.log(error.message)
-        return
+        console.log(error.message);
+        return;
       }
     }
 
@@ -66,11 +71,15 @@ function App() {
     // Por simplicidad, este ejemplo solo muestra una función lineal
     const x = [];
     const y = [];
-    for (let i = parseFloat(intervalStart); i <= parseFloat(intervalEnd); i += 0.1) {
+    for (
+      let i = parseFloat(intervalStart);
+      i <= parseFloat(intervalEnd);
+      i += 0.1
+    ) {
       x.push(i);
       // Reemplaza "^" por "**"
       const parsedFunc = func.replace(/\^/g, "**");
-      y.push(eval(parsedFunc.replace('x', `(${i})`)));
+      y.push(eval(parsedFunc.replace("x", `(${i})`)));
     }
     setPlotData({ x, y });
   };
@@ -80,7 +89,10 @@ function App() {
       <div className="flex w-full max-w-3xl">
         <form onSubmit={handleSubmit} className="flex-1 mr-8">
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="method">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="method"
+            >
               Método
             </label>
             <select
@@ -97,7 +109,10 @@ function App() {
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="function">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="function"
+            >
               Función
             </label>
             <input
@@ -110,7 +125,10 @@ function App() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="intervalStart">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="intervalStart"
+            >
               Intervalo de inicio
             </label>
             <input
@@ -123,7 +141,10 @@ function App() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="intervalEnd">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="intervalEnd"
+            >
               Intervalo de fin
             </label>
             <input
@@ -137,7 +158,10 @@ function App() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="iteracion">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="iteracion"
+            >
               Iteracion
             </label>
             <input
@@ -151,7 +175,10 @@ function App() {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="errorMargin">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="errorMargin"
+            >
               Margen de error
             </label>
             <input
@@ -181,12 +208,16 @@ function App() {
                   {
                     x: plotData.x,
                     y: plotData.y,
-                    type: 'scatter',
-                    mode: 'lines',
-                    marker: { color: 'blue' },
+                    type: "scatter",
+                    mode: "lines",
+                    marker: { color: "blue" },
                   },
                 ]}
-                layout={{ width: 600, height: 400, title: 'Gráfica de la función' }}
+                layout={{
+                  width: 600,
+                  height: 400,
+                  title: "Gráfica de la función",
+                }}
               />
             </div>
           </div>
