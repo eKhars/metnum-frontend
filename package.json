@@ -12,6 +12,7 @@
   "dependencies": {
     "@nivo/core": "^0.85.1",
     "@nivo/line": "^0.85.1",
+    "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "mathjs": "^12.4.1",
     "plotly.js": "^2.30.1",
