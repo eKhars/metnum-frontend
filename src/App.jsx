@@ -11,7 +11,10 @@ function App() {
   const [iteracion, setIteracion] = useState("");
   const [errorMargin, setErrorMargin] = useState("");
   const [plotData, setPlotData] = useState(null);
-  const [tableData, setTableData] = useState(null); // Estado para almacenar los datos de la tabla
+  const [tableData, setTableData] = useState(null); 
+  const [solution, setSolution] = useState(null); 
+  const [iterationsCount, setIterationsCount] = useState(null); 
+  const [errorPercentage, setErrorPercentage] = useState(null); 
 
   const backend = "http://localhost:3000/solve";
 
@@ -50,6 +53,9 @@ function App() {
 
         // Actualizar el estado con los datos de la tabla
         setTableData(result.data.tabla);
+        setSolution(result.data.solucion); 
+        setIterationsCount(result.data.iteraciones); 
+        setErrorPercentage(result.data.error * 100);
 
       } catch (error) {
         console.log(error);
@@ -70,6 +76,9 @@ function App() {
 
         // Actualizar el estado con los datos de la tabla
         setTableData(result.data.tabla);
+        setSolution(result.data.solucion); 
+        setIterationsCount(result.data.iteraciones); 
+        setErrorPercentage(result.data.error * 100);
 
       } catch (error) {
         console.log(error.message);
@@ -93,9 +102,9 @@ function App() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="flex w-full max-w-3xl">
-        <form onSubmit={handleSubmit} className="flex-1 mr-8">
+    <div className="">
+      <div className="flex w-full ">
+        <form onSubmit={handleSubmit} className="flex-1 ml-8 mt-16">
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -228,8 +237,15 @@ function App() {
                 }}
               />
             </div>
+            {solution && ( // Mostrar la solución si está disponible
+              <div className="mt-4">
+                <p>Solución aproximada: {solution}</p>
+                <p>Encontrada en {iterationsCount} iteraciones.</p>
+                <p>Con un error de: {errorPercentage}%</p>
+              </div>
+            )}
             {tableData && ( // Mostrar la tabla si hay datos disponibles
-              <div className="mt-8">
+              <div className="mt-8 max-h-96 overflow-y-auto">
                 <table className="table-auto">
                   <thead>
                     <tr>
