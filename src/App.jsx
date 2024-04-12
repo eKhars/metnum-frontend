@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import axios from 'axios';
-import { parse } from 'postcss';
+import { log } from 'mathjs';
 
 function App() {
   const [method, setMethod] = useState("");
@@ -11,10 +11,10 @@ function App() {
   const [iteracion, setIteracion] = useState("");
   const [errorMargin, setErrorMargin] = useState("");
   const [plotData, setPlotData] = useState(null);
-  const [tableData, setTableData] = useState(null); 
-  const [solution, setSolution] = useState(null); 
-  const [iterationsCount, setIterationsCount] = useState(null); 
-  const [errorPercentage, setErrorPercentage] = useState(null); 
+  const [tableData, setTableData] = useState(null);
+  const [solution, setSolution] = useState(null);
+  const [iterationsCount, setIterationsCount] = useState(null);
+  const [errorPercentage, setErrorPercentage] = useState(null);
 
   const backend = "http://localhost:3000/solve";
 
@@ -42,10 +42,10 @@ function App() {
       const data = {
         metodo: method,
         funcion: func,
-        xi: intervalStart,
-        xf: intervalEnd,
-        iteraciones: iteracion,
-        error_permisible: errorMargin,
+        xi: parseFloat(intervalStart),
+        xf: parseFloat(intervalEnd),
+        iteraciones: parseInt(iteracion),
+        error_permisible: parseFloat(errorMargin),
       };
       try {
         const result = await axios.post(backend, data);
@@ -53,8 +53,8 @@ function App() {
 
         // Actualizar el estado con los datos de la tabla
         setTableData(result.data.tabla);
-        setSolution(result.data.solucion); 
-        setIterationsCount(result.data.iteraciones); 
+        setSolution(result.data.solucion);
+        setIterationsCount(result.data.iteraciones);
         setErrorPercentage(result.data.error * 100);
 
       } catch (error) {
@@ -71,13 +71,14 @@ function App() {
         error_permisible: parseFloat(errorMargin),
       };
       try {
+
         const result = await axios.post(backend, data);
         console.log(result.data);
 
         // Actualizar el estado con los datos de la tabla
         setTableData(result.data.tabla);
-        setSolution(result.data.solucion); 
-        setIterationsCount(result.data.iteraciones); 
+        setSolution(result.data.solucion);
+        setIterationsCount(result.data.iteraciones);
         setErrorPercentage(result.data.error * 100);
 
       } catch (error) {
@@ -85,21 +86,20 @@ function App() {
         return;
       }
     }
-
-    // Generar datos para la gráfica
     const x = [];
     const y = [];
-    for (
-      let i = parseFloat(intervalStart);
-      i <= parseFloat(intervalEnd);
-      i += 0.1
-    ) {
+    const start = parseFloat(intervalStart);
+    const end = parseFloat(intervalEnd);
+    const step = (end - start) / 100;
+    for (let i = start - step; i <= end + step; i += step) {
       x.push(i);
       const parsedFunc = func.replace(/\^/g, "**");
-      y.push(eval(parsedFunc.replace("x", `(${i})`)));
+      const evaluatedFunc = parsedFunc.replace(/x/g, `(${i})`);
+      y.push(eval(evaluatedFunc));
     }
     setPlotData({ x, y });
   };
+
 
   return (
     <div className="">
